@@ -1,0 +1,9 @@
+requests
+django
+djangorestframework
+drf-spectacular
+django-cors-headers
+pandas
+defusedxml
+openpyxl
+sqlalchemy
