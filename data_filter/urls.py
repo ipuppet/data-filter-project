@@ -32,5 +32,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("api/", include("rules.urls")),
-    path("api/", include("preprocessor.urls")),
+    path("api/", include("processor.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

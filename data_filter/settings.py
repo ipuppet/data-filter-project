@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "rules",
-    "preprocessor",
+    "processor",
 ]
 
 MIDDLEWARE = [

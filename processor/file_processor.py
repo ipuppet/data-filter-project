@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 from django.conf import settings
 import pandas as pd
