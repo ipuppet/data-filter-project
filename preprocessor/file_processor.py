@@ -11,14 +11,7 @@ class FileProcessor:
         self.file = file
 
     def sqlite_file_path(self) -> Engine:
-        today = datetime.today().strftime("%Y/%m/%d")
-        sqlite_file_name = f"{self.file.id}.sqlite"
-        sqlite_file_path = os.path.join(
-            settings.MEDIA_ROOT, "databases", today, sqlite_file_name
-        )
-        os.makedirs(os.path.dirname(sqlite_file_path), exist_ok=True)
-
-        return sqlite_file_path
+        return f"{self.file.get_full_path()}.sqlite"
 
     def process(self):
         file_name = self.file.get_full_path()

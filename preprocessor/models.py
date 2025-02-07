@@ -26,5 +26,11 @@ class File(models.Model):
 
     def save(self, *args, **kwargs):
         self.id = uuid.uuid4()
-
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        sqlite_path = f"{self.get_full_path()}.sqlite"
+        if os.path.exists(sqlite_path):
+            os.remove(sqlite_path)
+        self.file.delete(save=False)
+        super().delete(*args, **kwargs)
