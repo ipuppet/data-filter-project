@@ -20,10 +20,22 @@ class UploadFile(APIView):
             file_instance = form.save(commit=False)
             file_instance.display_name = file_instance.file.name
             file_instance.save()
-            FileProcessor(file_instance).process()
             return Response(
                 {"id": file_instance.id, "display_name": file_instance.display_name},
                 status=status.HTTP_201_CREATED,
             )
         else:
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProcessFile(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        file_id = request.data.get("id")
+        file_instance = File.objects.get(id=file_id)
+        try:
+            FileProcessor(file_instance).process()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

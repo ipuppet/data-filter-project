@@ -6,4 +6,5 @@ router = DefaultRouter()
 
 urlpatterns = router.urls + [
     path("upload/", views.UploadFile.as_view()),
+    path("process/", views.ProcessFile.as_view()),
 ]

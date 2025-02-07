@@ -25,14 +25,6 @@ class File(models.Model):
         return os.path.join(settings.MEDIA_ROOT, self.file.path)
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.id = uuid.uuid4()
-        try:
-            existing_file = File.objects.get(id=self.id)
-            if existing_file.file and existing_file.file.path != self.file.path:
-                existing_file.file.delete(save=False)
-                existing_file.delete()
-        except File.DoesNotExist:
-            pass
+        self.id = uuid.uuid4()
 
         super().save(*args, **kwargs)
