@@ -18,9 +18,7 @@ class FilesView(APIView):
     def post(self, request):
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
-            file_instance = form.save(commit=False)
-            file_instance.display_name = file_instance.file.name
-            file_instance.save()
+            file_instance = form.save()
             return Response(
                 {"id": file_instance.id, "display_name": file_instance.display_name},
                 status=status.HTTP_201_CREATED,

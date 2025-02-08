@@ -14,7 +14,7 @@ def upload_to(instance, filename):
 
 class File(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    display_name = models.CharField(max_length=255, blank=True)
+    display_name = models.CharField(max_length=255, editable=False)
     file = models.FileField(upload_to=upload_to)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -23,10 +23,6 @@ class File(models.Model):
 
     def get_full_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.file.path)
-
-    def save(self, *args, **kwargs):
-        self.id = uuid.uuid4()
-        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         sqlite_path = f"{self.get_full_path()}.sqlite"

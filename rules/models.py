@@ -4,10 +4,16 @@ from django.db import models, transaction
 class Field(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class FieldMapper(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     value = models.CharField(max_length=200)  # field name from the data source
+
+    def __str__(self):
+        return f"{self.field} - {self.value}"
 
 
 class RuleManager(models.Manager):
@@ -40,6 +46,9 @@ class Rule(models.Model):
 
     objects = RuleManager()
 
+    def __str__(self):
+        return self.name
+
 
 class Condition(models.Model):
     rule = models.ForeignKey(Rule, on_delete=models.CASCADE, related_name="conditions")
@@ -47,3 +56,6 @@ class Condition(models.Model):
     value = models.CharField(max_length=200)
     operator = models.CharField(max_length=200)
     required = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.rule} - {self.field} - {self.operator} - {self.value}"
