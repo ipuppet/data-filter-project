@@ -16,6 +16,6 @@ class FieldViewSet(viewsets.ModelViewSet):
 
 
 class FieldMapperViewSet(viewsets.ModelViewSet):
-    queryset = FieldMapper.objects.all()
+    queryset = FieldMapper.objects.all().order_by("field")
     serializer_class = FieldMapperSerializer
     permission_classes = [permissions.IsAuthenticated]
