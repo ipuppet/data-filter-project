@@ -5,7 +5,8 @@ from .models import Rule, Field, FieldMapper, Condition
 class FieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = Field
-        fields = ["id", "name"]
+        fields = ["id", "name", "description", "created_at", "updated_at"]
+        read_only_fields = ["created_at", "updated_at"]
 
 
 class FieldMapperSerializer(serializers.ModelSerializer):
