@@ -3,6 +3,7 @@ from .models import File
 from .forms import FileForm
 
 
+@admin.register(File)
 class FileAdmin(admin.ModelAdmin):
     list_display = ("id", "display_name", "uploaded_at")
     form = FileForm
@@ -10,6 +11,3 @@ class FileAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         for file in queryset:
             file.delete()
-
-
-admin.site.register(File, FileAdmin)

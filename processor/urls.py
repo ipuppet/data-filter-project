@@ -6,7 +6,7 @@ router = DefaultRouter()
 
 urlpatterns = router.urls + [
     path("files/", views.FilesView.as_view()),
-    path("process/", views.ProcessView.as_view()),
+    path("process/", views.ProcessView.as_view(), name="process"),
     re_path(r"^metadata/(?P<id>[0-9a-fA-F-]+)/$", views.MetadataView.as_view()),
     re_path(r"^match/(?P<id>[0-9a-fA-F-]+)?/?$", views.MatchDataView.as_view()),
 ]
