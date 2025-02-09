@@ -12,11 +12,12 @@ class FieldMapperAdmin(admin.ModelAdmin):
     list_display = ("field", "value")
 
 
+class ConditionInline(admin.TabularInline):
+    model = Condition
+    extra = 1
+
+
 @admin.register(Rule)
 class RuleAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
-
-
-@admin.register(Condition)
-class ConditionAdmin(admin.ModelAdmin):
-    list_display = ("rule", "field", "value", "operator", "required")
+    list_display = ("name", "description", "created_at", "updated_at")
+    inlines = [ConditionInline]
