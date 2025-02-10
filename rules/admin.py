@@ -25,7 +25,7 @@ class FieldAdmin(admin.ModelAdmin):
 
     @admin.display(description="Mapped Values")
     def get_mapped_values(self, obj):
-        return ", ".join([m.value for m in obj.fieldmapper_set.all()])
+        return ", ".join([m.value for m in obj.mapped_values.all()])
 
 
 class ConditionInline(nested_admin.NestedStackedInline):
