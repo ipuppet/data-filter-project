@@ -1,6 +1,30 @@
 from django.db import models, transaction
 
 
+class FieldManager(models.Manager):
+    def create_with_mapped_values(self, name, description, data_type, mapped_values):
+        with transaction.atomic():
+            field = self.create(name=name, description=description, data_type=data_type)
+            for mapper in mapped_values:
+                FieldMapper.objects.create(field=field, **mapper)
+            return field
+
+    def update_with_mapped_values(
+        self, field, name, description, data_type, mapped_values
+    ):
+        with transaction.atomic():
+            field.name = name
+            field.description = description
+            field.data_type = data_type
+            field.save()
+
+            # 清除旧映射
+            field.mapped_values.all().delete()
+            for mapper in mapped_values:
+                FieldMapper.objects.create(field=field, **mapper)
+            return field
+
+
 class Field(models.Model):
     DATA_TYPES = [
         ("NUMERIC", "Numeric value"),
@@ -8,6 +32,7 @@ class Field(models.Model):
         ("CATEGORICAL", "Discrete values"),
         ("TEXT", "Free text"),
     ]
+    objects = FieldManager()
 
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField(blank=True)
@@ -20,7 +45,9 @@ class Field(models.Model):
 
 
 class FieldMapper(models.Model):
-    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    field = models.ForeignKey(
+        Field, on_delete=models.CASCADE, related_name="mapped_values"
+    )
     value = models.CharField(max_length=200)  # field name from the data source
 
     def __str__(self):
@@ -28,17 +55,19 @@ class FieldMapper(models.Model):
 
 
 class RuleManager(models.Manager):
-    def create_with_conditions(self, name, description, condition_tree):
+    def create_with_condition_groups(self, name, description, condition_groups):
         """
         参数示例：
-        condition_tree = {
+        condition_groups = {
+            "type": "GROUP",
             "logic_type": "AND",
-            "children": [
+            "conditions": [
                 {
                     "type": "GROUP",
                     "logic_type": "OR",
                     "conditions": [
                         {
+                            "type": "CONDITION",
                             "field_id": 1,
                             "operator": ">",
                             "value": 100,
@@ -58,10 +87,11 @@ class RuleManager(models.Manager):
         """
         with transaction.atomic():
             rule = self.create(name=name, description=description)
-            self._build_condition_tree(rule, None, condition_tree)
+            for idx, group in enumerate(condition_groups):
+                self._build_condition_tree(rule, None, group, idx)
             return rule
 
-    def update_with_conditions(self, rule, name, description, condition_tree):
+    def update_with_condition_groups(self, rule, name, description, condition_groups):
         with transaction.atomic():
             rule.name = name
             rule.description = description
@@ -69,21 +99,20 @@ class RuleManager(models.Manager):
 
             # 清除旧结构
             rule.condition_groups.all().delete()
-            self._build_condition_tree(rule, None, condition_tree)
+            for idx, group in enumerate(condition_groups):
+                self._build_condition_tree(rule, None, group, idx)
             return rule
 
     def _build_condition_tree(self, rule, parent_group, node, order=0):
-        if node.get("type") == "GROUP" or "children" in node:
+        if "conditions" in node:
             group = ConditionGroup.objects.create(
                 rule=rule,
                 parent_group=parent_group,
                 logic_type=node.get("logic_type", "AND"),
                 order=order,
             )
-
-            for idx, child in enumerate(node.get("children", [])):
+            for idx, child in enumerate(node.get("conditions", [])):
                 self._build_condition_tree(rule, group, child, idx)
-
         else:
             Condition.objects.create(
                 group=parent_group, **{k: v for k, v in node.items() if k != "type"}
@@ -109,17 +138,16 @@ class ConditionGroup(models.Model):
         ("NOT", "Negate the result"),
     ]
 
+    rule = models.ForeignKey(
+        Rule, on_delete=models.CASCADE, related_name="condition_groups"
+    )
     parent_group = models.ForeignKey(
         "self",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name="child_groups",
     )
     logic_type = models.CharField(max_length=10, choices=LOGIC_TYPE_CHOICES)
-    rule = models.ForeignKey(
-        Rule, on_delete=models.CASCADE, related_name="condition_groups"
-    )
     order = models.PositiveIntegerField(default=0)
 
     def __str__(self):

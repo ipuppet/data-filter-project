@@ -1,5 +1,7 @@
 from django.contrib import admin
 import nested_admin
+
+from .forms import ConditionGroupForm
 from .models import Field, FieldMapper, Rule, ConditionGroup, Condition
 
 
@@ -44,8 +46,9 @@ class ConditionInline(nested_admin.NestedStackedInline):
 class ConditionGroupInline(nested_admin.NestedTabularInline):
     model = ConditionGroup
     extra = 0
-    fields = ["logic_type", "parent_group", "order"]
+    fields = ["rule", "logic_type", "parent_group", "order"]
     inlines = [ConditionInline]
+    form = ConditionGroupForm
 
 
 @admin.register(Rule)
