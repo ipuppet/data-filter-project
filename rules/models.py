@@ -95,7 +95,6 @@ class Rule(models.Model):
 
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField(blank=True)
-    base_table = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -166,10 +165,9 @@ class Condition(models.Model):
         max_length=10, choices=TEMPORAL_UNITS, blank=True, null=True
     )
     temporal_window = models.IntegerField(blank=True, null=True)  # 时间窗口数值
-    aggregation_type = models.CharField(max_length=20, blank=True, null=True)
-    related_field = models.CharField(
-        max_length=200, blank=True, null=True
-    )  # 关联字段路径
+    aggregation_type = models.CharField(
+        max_length=20, blank=True, null=True, choices=AGGREGATION_TYPES
+    )
 
     # 表达式配置
     custom_expression = models.TextField(blank=True, null=True)  # 自定义SQL片段

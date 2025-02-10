@@ -35,9 +35,10 @@ class ConditionInline(nested_admin.NestedStackedInline):
         "operator",
         "value",
         ("temporal_unit", "temporal_window"),
-        ("aggregation_type", "related_field"),
+        ("aggregation_type"),
         "custom_expression",
     ]
+    classes = ["collapse"]
 
 
 class ConditionGroupInline(nested_admin.NestedTabularInline):
