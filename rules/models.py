@@ -27,10 +27,9 @@ class FieldManager(models.Manager):
 
 class Field(models.Model):
     DATA_TYPES = [
-        ("NUMERIC", "Numeric value"),
-        ("TEMPORAL", "Date/time"),
-        ("CATEGORICAL", "Discrete values"),
-        ("TEXT", "Free text"),
+        ("NUMERIC", "数值"),
+        ("DATETIME", "日期"),
+        ("TEXT", "字符"),
     ]
     objects = FieldManager()
 
@@ -56,35 +55,6 @@ class FieldMapper(models.Model):
 
 class RuleManager(models.Manager):
     def create_with_condition_groups(self, name, description, condition_groups):
-        """
-        参数示例：
-        condition_groups = {
-            "type": "GROUP",
-            "logic_type": "AND",
-            "conditions": [
-                {
-                    "type": "GROUP",
-                    "logic_type": "OR",
-                    "conditions": [
-                        {
-                            "type": "CONDITION",
-                            "field_id": 1,
-                            "operator": ">",
-                            "value": 100,
-                            "condition_type": "BASIC"
-                        }
-                    ]
-                },
-                {
-                    "type": "CONDITION",
-                    "field_id": 2,
-                    "operator": "==",
-                    "value": "unpaid",
-                    "condition_type": "BASIC"
-                }
-            ]
-        }
-        """
         with transaction.atomic():
             rule = self.create(name=name, description=description)
             for idx, group in enumerate(condition_groups):
@@ -133,9 +103,9 @@ class Rule(models.Model):
 
 class ConditionGroup(models.Model):
     LOGIC_TYPE_CHOICES = [
-        ("AND", "All conditions must be true"),
-        ("OR", "Any condition can be true"),
-        ("NOT", "Negate the result"),
+        ("AND", "所有条件必须匹配"),
+        ("OR", "至少一条匹配"),
+        ("NOT", "所有条件不可匹配"),
     ]
 
     rule = models.ForeignKey(
@@ -156,25 +126,34 @@ class ConditionGroup(models.Model):
 
 class Condition(models.Model):
     CONDITION_TYPES = [
-        ("BASIC", "Field comparison"),
-        ("AGGREGATE", "Aggregate function"),
-        ("TEMPORAL", "Time-based rule"),
-        ("RELATIONAL", "Cross-record check"),
-        ("EXISTS", "Existence check"),
+        ("BASIC", "字段匹配"),
+        ("TEMPORAL", "日期匹配"),
         ("CUSTOM_SQL", "Raw SQL expression"),
-        ("COMPOSITE", "Nested logic group"),
     ]
     TEMPORAL_UNITS = [
-        ("day", "Day"),
-        ("month", "Month"),
-        ("year", "Year"),
+        ("day", "天"),
+        ("month", "月"),
+        ("year", "年"),
     ]
     AGGREGATION_TYPES = [
-        ("COUNT", "Count"),
-        ("SUM", "Sum"),
-        ("AVG", "Average"),
-        ("MIN", "Minimum"),
-        ("MAX", "Maximum"),
+        ("COUNT", "计次"),
+        ("SUM", "求和"),
+        ("AVG", "求平均"),
+        ("MIN", "最小值"),
+        ("MAX", "最大值"),
+    ]
+    OPERATORS = [
+        ("==", "=="),
+        (">", ">"),
+        ("<", "<"),
+        (">=", ">="),
+        ("<=", "<="),
+        ("!=", "!="),
+        ("in", "In"),
+        ("not in", "Not in"),
+        ("contains", "Contains"),
+        ("not contains", "Not contains"),
+        ("regex", "Regex match"),
     ]
 
     # 基础字段
@@ -185,8 +164,8 @@ class Condition(models.Model):
 
     # 基本条件配置
     field = models.ForeignKey(Field, null=True, on_delete=models.SET_NULL)
-    operator = models.CharField(max_length=20)  # 支持扩展如：contains, regex, in
-    value = models.JSONField(blank=True, null=True)  # 支持多值比较
+    operator = models.CharField(max_length=20)
+    value = models.CharField(max_length=1000, blank=True, null=True)
 
     # 增强功能字段
     temporal_unit = models.CharField(
