@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
+from django.utils.translation import gettext as _
 from .processor import FileConverter, Matcher, TableStructure
 from .models import File
 from .serializers import FileSerializer
@@ -55,7 +55,7 @@ class MatchDataView(APIView):
             items_per_page = int(request.query_params.get("items_per_page", 10))
         except ValueError:
             return Response(
-                "Invalid pagination parameters", status=status.HTTP_400_BAD_REQUEST
+                _("Invalid pagination parameters"), status=status.HTTP_400_BAD_REQUEST
             )
 
         matcher = Matcher(file_instance)

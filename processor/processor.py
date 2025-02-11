@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 from typing import Dict
 from django.conf import settings
+from django.utils.translation import gettext as _
 import pandas as pd
 from sqlalchemy import create_engine, MetaData, select, Table
 from sqlalchemy.orm import sessionmaker
@@ -139,7 +140,7 @@ class Matcher:
 
     def fetch(self):
         if not self.table:
-            raise ValueError("Table name is not set")
+            raise ValueError(_("Table name is not set"))
         session = DatabaseManager.get_session(self.file)
         table = Table(self.table, MetaData(), autoload_with=self.engine)
 

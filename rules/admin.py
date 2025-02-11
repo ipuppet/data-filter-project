@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext as _
 import nested_admin
 
 from .forms import ConditionGroupForm
@@ -23,7 +24,7 @@ class FieldAdmin(admin.ModelAdmin):
     )
     inlines = [FieldMapperInline]
 
-    @admin.display(description="Mapped Values")
+    @admin.display(description=_("Mapped values"))
     def get_mapped_values(self, obj):
         return ", ".join([m.value for m in obj.mapped_values.all()])
 

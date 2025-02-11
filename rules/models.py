@@ -1,4 +1,5 @@
 from django.db import models, transaction
+from django.utils.translation import gettext as _
 
 
 class FieldManager(models.Manager):
@@ -27,17 +28,25 @@ class FieldManager(models.Manager):
 
 class Field(models.Model):
     DATA_TYPES = [
-        ("NUMERIC", "数值"),
-        ("DATETIME", "日期"),
-        ("TEXT", "字符"),
+        ("NUMERIC", _("Numeric")),
+        ("DATETIME", _("Datetime")),
+        ("TEXT", _("Text")),
     ]
     objects = FieldManager()
 
-    name = models.CharField(max_length=200, unique=True)
-    description = models.TextField(blank=True)
-    data_type = models.CharField(max_length=20, choices=DATA_TYPES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=200, unique=True, verbose_name=_("Field name"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
+    data_type = models.CharField(
+        max_length=20, choices=DATA_TYPES, verbose_name=_("Data type")
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Creation time")
+    )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Update time"))
+
+    class Meta:
+        verbose_name = _("Field")
+        verbose_name_plural = _("Fields")
 
     def __str__(self):
         return self.name
@@ -45,12 +54,21 @@ class Field(models.Model):
 
 class FieldMapper(models.Model):
     field = models.ForeignKey(
-        Field, on_delete=models.CASCADE, related_name="mapped_values"
+        Field,
+        on_delete=models.CASCADE,
+        related_name="mapped_values",
+        verbose_name=_("Field"),
     )
-    value = models.CharField(max_length=200)  # field name from the data source
+    value = models.CharField(
+        max_length=200, verbose_name=_("Mapped value")
+    )  # field name from the data source
+
+    class Meta:
+        verbose_name = _("Field mapper")
+        verbose_name_plural = _("Field mappers")
 
     def __str__(self):
-        return f"{self.field} - {self.value}"
+        return f"{self.field} -> {self.value}"
 
 
 class RuleManager(models.Manager):
@@ -92,10 +110,16 @@ class RuleManager(models.Manager):
 class Rule(models.Model):
     objects = RuleManager()
 
-    name = models.CharField(max_length=200, unique=True)
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=200, unique=True, verbose_name=_("Rule name"))
+    description = models.TextField(blank=True, verbose_name=_("Description"))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Creation time")
+    )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Update time"))
+
+    class Meta:
+        verbose_name = _("Rule")
+        verbose_name_plural = _("Rules")
 
     def __str__(self):
         return self.name
@@ -103,22 +127,32 @@ class Rule(models.Model):
 
 class ConditionGroup(models.Model):
     LOGIC_TYPE_CHOICES = [
-        ("AND", "所有条件必须匹配"),
-        ("OR", "至少一条匹配"),
-        ("NOT", "所有条件不可匹配"),
+        ("AND", _("Match all conditions")),
+        ("OR", _("Match at least one condition")),
+        ("NOT", _("Exclude all matching conditions")),
     ]
 
     rule = models.ForeignKey(
-        Rule, on_delete=models.CASCADE, related_name="condition_groups"
+        Rule,
+        on_delete=models.CASCADE,
+        related_name="condition_groups",
+        verbose_name=_("Rule"),
     )
     parent_group = models.ForeignKey(
         "self",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
+        verbose_name=_("Parent group"),
     )
-    logic_type = models.CharField(max_length=10, choices=LOGIC_TYPE_CHOICES)
-    order = models.PositiveIntegerField(default=0)
+    logic_type = models.CharField(
+        max_length=10, choices=LOGIC_TYPE_CHOICES, verbose_name=_("Logic type")
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name=_("Order"))
+
+    class Meta:
+        verbose_name = _("Rule group")
+        verbose_name_plural = _("Rule groups")
 
     def __str__(self):
         return f"Group {self.id}"
@@ -126,21 +160,21 @@ class ConditionGroup(models.Model):
 
 class Condition(models.Model):
     CONDITION_TYPES = [
-        ("BASIC", "字段匹配"),
-        ("TEMPORAL", "日期匹配"),
-        ("CUSTOM_SQL", "Raw SQL expression"),
+        ("BASIC", _("Field match")),
+        ("TEMPORAL", _("Temporal match")),
+        ("CUSTOM_SQL", _("Raw SQL expression")),
     ]
     TEMPORAL_UNITS = [
-        ("day", "天"),
-        ("month", "月"),
-        ("year", "年"),
+        ("day", _("Day")),
+        ("month", _("Month")),
+        ("year", _("Year")),
     ]
     AGGREGATION_TYPES = [
-        ("COUNT", "计次"),
-        ("SUM", "求和"),
-        ("AVG", "求平均"),
-        ("MIN", "最小值"),
-        ("MAX", "最大值"),
+        ("COUNT", _("Count")),
+        ("SUM", _("Sum")),
+        ("AVG", _("Average")),
+        ("MIN", _("Minimum value")),
+        ("MAX", _("Maximum value")),
     ]
     OPERATORS = [
         ("==", "=="),
@@ -149,35 +183,63 @@ class Condition(models.Model):
         (">=", ">="),
         ("<=", "<="),
         ("!=", "!="),
-        ("in", "In"),
-        ("not in", "Not in"),
-        ("contains", "Contains"),
-        ("not contains", "Not contains"),
-        ("regex", "Regex match"),
+        ("contains", _("Contains")),
+        ("not_contains", _("Not contains")),
+        ("regex", _("Regex match")),
     ]
 
     # 基础字段
-    condition_type = models.CharField(max_length=20, choices=CONDITION_TYPES)
+    condition_type = models.CharField(
+        max_length=20, choices=CONDITION_TYPES, verbose_name=_("Condition type")
+    )
     group = models.ForeignKey(
-        ConditionGroup, on_delete=models.CASCADE, related_name="conditions"
+        ConditionGroup,
+        on_delete=models.CASCADE,
+        related_name="conditions",
+        verbose_name=_("Group"),
     )
 
     # 基本条件配置
-    field = models.ForeignKey(Field, null=True, on_delete=models.SET_NULL)
-    operator = models.CharField(max_length=20)
-    value = models.CharField(max_length=1000, blank=True, null=True)
+    field = models.ForeignKey(
+        Field, null=True, on_delete=models.SET_NULL, verbose_name=_("Field")
+    )
+    operator = models.CharField(
+        max_length=20, choices=OPERATORS, verbose_name=_("Operator")
+    )
+    value = models.CharField(
+        max_length=1000, blank=True, null=True, verbose_name=_("Value")
+    )
 
     # 增强功能字段
     temporal_unit = models.CharField(
-        max_length=10, choices=TEMPORAL_UNITS, blank=True, null=True
+        max_length=10,
+        choices=TEMPORAL_UNITS,
+        blank=True,
+        null=True,
+        verbose_name=_("Temporal unit"),
     )
-    temporal_window = models.IntegerField(blank=True, null=True)  # 时间窗口数值
+    temporal_window = models.IntegerField(
+        blank=True, null=True, verbose_name=_("Temporal window")
+    )  # 时间窗口数值
     aggregation_type = models.CharField(
-        max_length=20, blank=True, null=True, choices=AGGREGATION_TYPES
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=AGGREGATION_TYPES,
+        verbose_name=_("Aggregation type"),
     )
 
     # 表达式配置
-    custom_expression = models.TextField(blank=True, null=True)  # 自定义SQL片段
+    custom_expression = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_("Custom expression"),
+        help_text=_("Raw SQL expression"),
+    )
+
+    class Meta:
+        verbose_name = _("Condition")
+        verbose_name_plural = _("Conditions")
 
     def __str__(self):
         return f"{self.field} {self.operator} {self.value}"

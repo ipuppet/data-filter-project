@@ -1,0 +1,214 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-12 01:22+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+#: rules/admin.py:27
+msgid "Mapped values"
+msgstr ""
+
+#: rules/models.py:31
+msgid "Numeric"
+msgstr ""
+
+#: rules/models.py:32
+msgid "Datetime"
+msgstr ""
+
+#: rules/models.py:33
+msgid "Text"
+msgstr ""
+
+#: rules/models.py:37
+msgid "Field name"
+msgstr ""
+
+#: rules/models.py:38 rules/models.py:114
+msgid "Description"
+msgstr ""
+
+#: rules/models.py:40
+msgid "Data type"
+msgstr ""
+
+#: rules/models.py:43 rules/models.py:116
+msgid "Creation time"
+msgstr ""
+
+#: rules/models.py:45 rules/models.py:118
+msgid "Update time"
+msgstr ""
+
+#: rules/models.py:48 rules/models.py:60 rules/models.py:204
+msgid "Field"
+msgstr ""
+
+#: rules/models.py:49
+msgid "Fields"
+msgstr ""
+
+#: rules/models.py:63
+msgid "Mapped value"
+msgstr ""
+
+#: rules/models.py:67
+msgid "Field mapper"
+msgstr ""
+
+#: rules/models.py:68
+msgid "Field mappers"
+msgstr ""
+
+#: rules/models.py:113
+msgid "Rule name"
+msgstr ""
+
+#: rules/models.py:121 rules/models.py:139
+msgid "Rule"
+msgstr ""
+
+#: rules/models.py:122
+msgid "Rules"
+msgstr ""
+
+#: rules/models.py:130
+msgid "Match all conditions"
+msgstr ""
+
+#: rules/models.py:131
+msgid "Match at least one condition"
+msgstr ""
+
+#: rules/models.py:132
+msgid "Exclude all matching conditions"
+msgstr ""
+
+#: rules/models.py:146
+msgid "Parent group"
+msgstr ""
+
+#: rules/models.py:149
+msgid "Logic type"
+msgstr ""
+
+#: rules/models.py:151
+msgid "Order"
+msgstr ""
+
+#: rules/models.py:154
+msgid "Rule group"
+msgstr ""
+
+#: rules/models.py:155
+msgid "Rule groups"
+msgstr ""
+
+#: rules/models.py:163
+msgid "Field match"
+msgstr ""
+
+#: rules/models.py:164
+msgid "Temporal match"
+msgstr ""
+
+#: rules/models.py:165 rules/models.py:237
+msgid "Raw SQL expression"
+msgstr ""
+
+#: rules/models.py:168
+msgid "Day"
+msgstr ""
+
+#: rules/models.py:169
+msgid "Month"
+msgstr ""
+
+#: rules/models.py:170
+msgid "Year"
+msgstr ""
+
+#: rules/models.py:173
+msgid "Count"
+msgstr ""
+
+#: rules/models.py:174
+msgid "Sum"
+msgstr ""
+
+#: rules/models.py:175
+msgid "Average"
+msgstr ""
+
+#: rules/models.py:176
+msgid "Minimum value"
+msgstr ""
+
+#: rules/models.py:177
+msgid "Maximum value"
+msgstr ""
+
+#: rules/models.py:186
+msgid "Contains"
+msgstr ""
+
+#: rules/models.py:187
+msgid "Not contains"
+msgstr ""
+
+#: rules/models.py:188
+msgid "Regex match"
+msgstr ""
+
+#: rules/models.py:193
+msgid "Condition type"
+msgstr ""
+
+#: rules/models.py:199
+msgid "Group"
+msgstr ""
+
+#: rules/models.py:207
+msgid "Operator"
+msgstr ""
+
+#: rules/models.py:210
+msgid "Value"
+msgstr ""
+
+#: rules/models.py:219
+msgid "Temporal unit"
+msgstr ""
+
+#: rules/models.py:222
+msgid "Temporal window"
+msgstr ""
+
+#: rules/models.py:229
+msgid "Aggregation type"
+msgstr ""
+
+#: rules/models.py:236
+msgid "Custom expression"
+msgstr ""
+
+#: rules/models.py:241
+msgid "Condition"
+msgstr ""
+
+#: rules/models.py:242
+msgid "Conditions"
+msgstr ""
