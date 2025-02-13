@@ -203,7 +203,7 @@ class Condition(models.Model):
         Field, null=True, on_delete=models.SET_NULL, verbose_name=_("Field")
     )
     operator = models.CharField(
-        max_length=20, choices=OPERATORS, verbose_name=_("Operator")
+        blank=True, max_length=20, choices=OPERATORS, verbose_name=_("Operator")
     )
     value = models.CharField(
         max_length=1000, blank=True, null=True, verbose_name=_("Value")

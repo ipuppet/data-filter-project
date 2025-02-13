@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from typing import Dict, Tuple, List
 from django.db.models import QuerySet
@@ -24,7 +25,7 @@ class SQLBuilder:
         """查询生成"""
         root_groups = self.rule.condition_groups.filter(parent_group=None)
         where_clause, params = self.process_groups(root_groups)
-        sql = f"SELECT * FROM {self.target_table.name} WHERE {where_clause}"
+        sql = f"SELECT * FROM `{self.target_table.name}` WHERE {where_clause}"
         return sql, params
 
     def process_groups(
@@ -115,9 +116,13 @@ class SQLBuilder:
         column = self._get_mapped_column(condition.field)
         window = condition.temporal_window
         unit = condition.temporal_unit
+        custom_datetime = datetime.strptime(
+            self._format_condition_value(condition), "%Y-%m-%d %H:%M:%S"
+        )
+        formatted_date = custom_datetime.strftime("%Y-%m-%d %H:%M:%S")
         return (
-            f"{column} BETWEEN CURRENT_TIMESTAMP - INTERVAL '{window} {unit}' "
-            "AND CURRENT_TIMESTAMP"
+            f"{column} BETWEEN datetime('{formatted_date}', '-{window} {unit}') "
+            f"AND datetime('{formatted_date}')"
         ), {}
 
     def _handle_custom_sql(self, condition: Condition) -> Tuple[str, Dict]:
