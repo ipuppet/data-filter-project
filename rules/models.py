@@ -129,7 +129,6 @@ class ConditionGroup(models.Model):
     LOGIC_TYPE_CHOICES = [
         ("AND", _("Match all conditions")),
         ("OR", _("Match at least one condition")),
-        ("NOT", _("Exclude all matching conditions")),
     ]
 
     rule = models.ForeignKey(
@@ -165,9 +164,9 @@ class Condition(models.Model):
         ("CUSTOM_SQL", _("Raw SQL expression")),
     ]
     TEMPORAL_UNITS = [
-        ("day", _("Day")),
-        ("month", _("Month")),
-        ("year", _("Year")),
+        ("DAY", _("Day")),
+        ("MONTH", _("Month")),
+        ("YEAR", _("Year")),
     ]
     AGGREGATION_TYPES = [
         ("COUNT", _("Count")),
@@ -177,15 +176,15 @@ class Condition(models.Model):
         ("MAX", _("Maximum value")),
     ]
     OPERATORS = [
-        ("==", "=="),
+        ("=", "="),
         (">", ">"),
         ("<", "<"),
         (">=", ">="),
         ("<=", "<="),
         ("!=", "!="),
-        ("contains", _("Contains")),
-        ("not_contains", _("Not contains")),
-        ("regex", _("Regex match")),
+        ("LIKE", _("Contains")),
+        ("NOT LIKE", _("Not contains")),
+        ("REGEXP", _("Regex match")),
     ]
 
     # 基础字段

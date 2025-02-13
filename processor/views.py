@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
-from .processor import FileConverter, Matcher, TableStructure
+from .processor import FileConverter, DBStructure
+from .matcher import Matcher
 from .models import File
 from .serializers import FileSerializer
 
@@ -37,7 +38,7 @@ class MetadataView(APIView):
                 "id": file_instance.id,
                 "display_name": file_instance.display_name,
                 "uploaded_at": file_instance.uploaded_at,
-                "tables": TableStructure(file_instance).fetch(),
+                "tables": DBStructure(file_instance).fetch(),
             },
             status=status.HTTP_200_OK,
         )
@@ -65,12 +66,14 @@ class MatchDataView(APIView):
         )
 
     def post(self, request):
-        id = request.data.get("id")
-        file_instance = get_object_or_404(File, id=id)
+        file_id = request.data.get("file_id")
+        file_instance = get_object_or_404(File, id=file_id)
+        table_name = request.data.get("table")
+        rule_id = request.data.get("rule_id")
 
-        matcher = Matcher(file_instance)
-        matcher.set_table(request.data.get("table"))
+        matcher = Matcher()
+        matcher.set_file(file_instance).set_rule(rule_id).set_table(table_name)
         return Response(
-            matcher.fetch(),
+            {"path": matcher.fetch()},
             status=status.HTTP_200_OK,
         )

@@ -8,7 +8,7 @@ from .models import Field, FieldMapper, Rule, ConditionGroup, Condition
 
 class FieldMapperInline(admin.TabularInline):
     model = FieldMapper
-    extra = 1
+    extra = 0
     fields = ("field", "value")
 
 
@@ -54,6 +54,6 @@ class ConditionGroupInline(nested_admin.NestedTabularInline):
 
 @admin.register(Rule)
 class RuleAdmin(nested_admin.NestedModelAdmin):
-    list_display = ("name", "description", "created_at", "updated_at")
+    list_display = ("name", "id", "description", "created_at", "updated_at")
     inlines = [ConditionGroupInline]
     save_on_top = True

@@ -8,7 +8,7 @@ from .processor import FileConverter
 
 @admin.register(File)
 class FileAdmin(admin.ModelAdmin):
-    list_display = ("id", "display_name", "uploaded_at")
+    list_display = ("display_name", "id", "uploaded_at")
     form = FileForm
     actions = ["process_file"]
 

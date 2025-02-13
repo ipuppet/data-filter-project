@@ -1,4 +1,5 @@
 import os
+import glob
 import uuid
 from datetime import datetime
 from django.conf import settings
@@ -31,9 +32,9 @@ class File(models.Model):
         return os.path.join(settings.MEDIA_ROOT, self.file.path)
 
     def delete(self, *args, **kwargs):
-        sqlite_path = f"{self.get_full_path()}.sqlite"
-        if os.path.exists(sqlite_path):
-            os.remove(sqlite_path)
+        files = glob.glob(f"{self.get_full_path()}*")
+        for file in files:
+            os.remove(file)
         self.file.delete(save=False)
         super().delete(*args, **kwargs)
 
