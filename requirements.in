@@ -7,3 +7,4 @@ pandas
 defusedxml
 openpyxl
 sqlalchemy
+django-nested-admin

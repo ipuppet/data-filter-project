@@ -4,9 +4,6 @@
 #
 #    pip-compile
 #
---index-url https://mirrors.aliyun.com/pypi/simple/
---trusted-host mirrors.aliyun.com
-
 asgiref==3.8.1
     # via
     #   django
@@ -29,6 +26,8 @@ django==5.1
     #   drf-spectacular
 django-cors-headers==4.7.0
     # via -r requirements.in
+django-nested-admin==4.1.1
+    # via -r requirements.in
 djangorestframework==3.15.2
     # via
     #   -r requirements.in
@@ -37,8 +36,6 @@ drf-spectacular==0.28.0
     # via -r requirements.in
 et-xmlfile==2.0.0
     # via openpyxl
-greenlet==3.1.1
-    # via sqlalchemy
 idna==3.10
     # via requests
 inflection==0.5.1
@@ -55,6 +52,8 @@ pandas==2.2.3
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via pandas
+python-monkey-business==1.1.0
+    # via django-nested-admin
 pytz==2025.1
     # via pandas
 pyyaml==6.0.2

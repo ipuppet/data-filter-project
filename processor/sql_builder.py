@@ -1,5 +1,5 @@
-from datetime import datetime
 import re
+from datetime import datetime
 from typing import Dict, Tuple, List
 from django.db.models import QuerySet
 from sqlalchemy import Table

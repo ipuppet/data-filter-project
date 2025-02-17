@@ -1,4 +1,5 @@
 from rest_framework import permissions, viewsets
+
 from .models import Rule, Field, FieldMapper
 from .serializers import RuleSerializer, FieldSerializer, FieldMapperSerializer
 

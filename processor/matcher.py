@@ -1,13 +1,12 @@
 from datetime import datetime
-import os
+import pandas as pd
 from django.conf import settings
 from django.utils.translation import gettext as _
-import pandas as pd
 from sqlalchemy import MetaData, select, Table, text
-
 from processor.sql_builder import SQLBuilder
 from processor.processor import DatabaseManager, FileConverter
 from rules.models import Rule
+
 from .models import File
 
 
