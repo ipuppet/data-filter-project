@@ -3,7 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import TemplateView
 
+from rules.models import Rule
 from .processor import FileConverter, DBStructure
 from .matcher import Matcher
 from .models import File
@@ -19,8 +22,8 @@ class FileViewSet(viewsets.ModelViewSet):
 class ProcessView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
-        file_id = request.data.get("file_id")
+    def post(self, request, *args, **kwargs):
+        file_id = kwargs.get("file_id")
         file_instance = get_object_or_404(File, id=file_id)
 
         try:
@@ -48,24 +51,6 @@ class MetadataView(APIView):
 class MatchDataView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        file_id = kwargs.get("file_id")
-        file_instance = get_object_or_404(File, id=file_id)
-
-        try:
-            page_number = int(request.query_params.get("page_number", 1))
-            items_per_page = int(request.query_params.get("items_per_page", 10))
-        except ValueError:
-            return Response(
-                _("Invalid pagination parameters"), status=status.HTTP_400_BAD_REQUEST
-            )
-
-        matcher = Matcher()
-        return Response(
-            matcher.set_file(file_instance).fetch_all_data(page_number, items_per_page),
-            status=status.HTTP_200_OK,
-        )
-
     def post(self, request):
         file_id = request.data.get("file_id")
         file_instance = get_object_or_404(File, id=file_id)
@@ -73,8 +58,23 @@ class MatchDataView(APIView):
         rule_id = request.data.get("rule_id")
 
         matcher = Matcher()
-        matcher.set_file(file_instance).set_rule(rule_id).set_table(table_name)
+        matcher.set_file(file_instance).set_rule(rule_id).set_table(table_name).fetch()
         return Response(
-            {"path": matcher.fetch()},
+            {"path": matcher.url_path, "df": matcher.df.to_json(orient="columns")},
             status=status.HTTP_200_OK,
         )
+
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class HomeView(LoginRequiredMixin, AdminRequiredMixin, TemplateView):
+    template_name = "home/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["files"] = File.objects.all().order_by("-uploaded_at")
+        context["rules"] = Rule.objects.all()
+        return context

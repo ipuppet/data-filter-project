@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>数据筛查</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap@5.3.3.min.css' %}"/>
+    <script src="{% static 'js/bootstrap@5.3.3.min.js' %}"></script>
+    <script src="{% static 'js/axios.min.js' %}"></script>
+    <style>
+        .table-nowrap td {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">数据筛查</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" target="_blank" href="/admin">后台管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#uploadFileModal">上传文件</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link">退出登录</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <table class="table table-striped table-hover caption-top">
+        <caption>文件列表</caption>
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">名称</th>
+            <th scope="col">上传日期</th>
+            <th scope="col">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in files %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ file.display_name }}</td>
+                <td>{{ file.uploaded_at }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                data-bs-target="#fileDeleteConfirmModal" data-bs-fileid="{{ file.id }}"
+                                data-bs-filename="{{ file.display_name }}">
+                            删除
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#matchFileModal" data-bs-fileid="{{ file.id }}"
+                                data-bs-filename="{{ file.display_name }}">
+                            匹配
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="uploadFileModalLabel">上传文件</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="uploadFileForm" novalidate>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="uploadFile" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="uploadFile()">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="fileDeleteConfirmModal" tabindex="-1" aria-labelledby="fileDeleteConfirmModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="fileDeleteConfirmModalLabel">确认删除文件？</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="matchFileModal" tabindex="-1" aria-labelledby="matchFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="matchFileModalLabel">应用规则</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="matchFileForm" novalidate>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="matchFileID">文件ID</label>
+                        <input disabled="disabled" type="text" class="form-control" id="matchFileID">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="matchFileTable">表</label>
+                        <select class="form-select" id="matchFileTable" required>
+                            <option value="">{{ table.name }}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="matchRuleID">规则ID</label>
+                        <select class="form-select" id="matchRuleID" required>
+                            <option selected disabled value="">-----</option>
+                            {% for rule in rules %}
+                                <option value="{{ rule.id }}">{{ rule.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="matchFile()">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="matchFileResultModal" tabindex="-1" aria-labelledby="matchFileResultModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="matchFileResultModalLabel">匹配结果</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-hover table-nowrap">
+                    <thead>
+                    <tr></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="downloadExcel()">下载 Excel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    axios.defaults.headers.common['X-CSRFToken'] = "{{ csrf_token|safe }}"
+
+    const matchFileModal = document.querySelector('#matchFileModal')
+    const matchFileModalForm = document.querySelector('#matchFileForm')
+    const fileIDInput = matchFileModal.querySelector('#matchFileID')
+    const tableInput = matchFileModal.querySelector('#matchFileTable')
+    const ruleIDInput = matchFileModal.querySelector('#matchRuleID')
+
+    const matchFileResultModal = document.querySelector('#matchFileResultModal')
+    const fileDeleteConfirmModal = document.querySelector('#fileDeleteConfirmModal')
+
+    const metadata = {}
+    const matchResult = {}
+
+    if (matchFileModal) {
+        matchFileModal.addEventListener('show.bs.modal', event => {
+            matchFileModalForm.classList.remove('was-validated')
+            const button = event.relatedTarget
+            const fileID = button.getAttribute('data-bs-fileid')
+            const filename = button.getAttribute('data-bs-filename')
+
+            const modalTitle = matchFileModal.querySelector('.modal-title')
+            modalTitle.textContent = `应用规则 ${filename}`
+            fileIDInput.value = fileID
+
+            tableInput.innerHTML = '<option selected disabled value="">-----</option>'
+            if (metadata[fileID]) {
+                metadata[fileID].tables.forEach(table => {
+                    const opt = document.createElement('option')
+                    opt.value = table.name
+                    opt.textContent = table.name
+                    tableInput.appendChild(opt)
+                })
+            } else {
+                axios.get(`/api/metadata/${fileID}/`)
+                    .then(response => {
+                        response.data.tables.forEach(table => {
+                            const opt = document.createElement('option')
+                            opt.value = table.name
+                            opt.textContent = table.name
+                            tableInput.appendChild(opt)
+                        })
+                        metadata[fileID] = response.data
+                    })
+                    .catch(error => console.error('Error loading table options:', error))
+            }
+        })
+    }
+    if (fileDeleteConfirmModal) {
+        fileDeleteConfirmModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const fileID = button.getAttribute('data-bs-fileid')
+            const filename = button.getAttribute('data-bs-filename')
+
+            const modalBody = fileDeleteConfirmModal.querySelector('.modal-body')
+            modalBody.textContent = filename
+
+            const modalFooter = fileDeleteConfirmModal.querySelector('.modal-footer')
+            modalFooter.querySelector('button').onclick = () => deleteFile(fileID)
+        })
+    }
+
+    function uploadFile() {
+        const uploadFileForm = document.querySelector('#uploadFileForm')
+        uploadFileForm.classList.remove('was-validated')
+        if (!uploadFileForm.checkValidity()) {
+            uploadFileForm.classList.add('was-validated')
+            return
+        }
+        const file = document.querySelector('#uploadFile').files[0]
+        const formData = new FormData()
+        formData.append('file', file)
+        axios.post('/api/files/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(response => {
+            if (response.data.id) {
+                axios.post(`/api/process/${response.data.id}/`).then(() => {
+                    window.location.reload()
+                })
+            } else {
+                console.error('Error uploading file:', response.data)
+            }
+        }).catch(error => {
+            console.error('Error uploading file:', error)
+        })
+    }
+
+    function deleteFile(id) {
+        axios.delete(`/api/files/${id}/`).then(() => {
+            window.location.reload()
+        })
+    }
+
+    function matchFile() {
+        const fileID = fileIDInput.value
+        const table = tableInput.value
+        const ruleID = Number(ruleIDInput.value)
+
+        if (!matchFileModalForm.checkValidity()) {
+            matchFileModalForm.classList.add('was-validated')
+            return
+        }
+        const displayData = (df, path) => {
+            const tableDom = matchFileResultModal.querySelector('.table')
+            const thead_tr = tableDom.querySelector('thead').querySelector('tr')
+            const tbody = tableDom.querySelector('tbody')
+            thead_tr.innerHTML = ''
+            tbody.innerHTML = ''
+
+            const keys = Object.keys(df)
+            keys.forEach(key => {
+                const th = document.createElement('th')
+                th.textContent = key
+                thead_tr.appendChild(th)
+            })
+            const numRows = Object.keys(df[keys[0]]).length
+            for (let i = 0; i < numRows; i++) {
+                const row = tbody.insertRow()
+                keys.forEach(key => {
+                    const cell = row.insertCell()
+                    cell.textContent = df[key][i]
+                })
+            }
+
+            const modal = new bootstrap.Modal(matchFileResultModal)
+            modal.show()
+        }
+        if (matchResult[fileID] && matchResult[fileID][ruleID] && matchResult[fileID][ruleID][table]) {
+            const data = matchResult[fileID][ruleID][table]
+            displayData(data.df, data.path)
+        } else {
+            axios.post(`/api/match/`, {
+                file_id: fileID,
+                rule_id: ruleID,
+                table: table
+            }).then(res => {
+                const path = res.data.path
+                const df = JSON.parse(res.data.df)
+                displayData(df, path)
+                matchResult[fileID] = matchResult[fileID] || {}
+                matchResult[fileID][ruleID] = matchResult[fileID][ruleID] || {}
+                matchResult[fileID][ruleID][table] = {df, path}
+            }).catch(err => {
+                console.error(err)
+            })
+        }
+    }
+
+    function downloadExcel() {
+        const fileID = fileIDInput.value
+        const table = tableInput.value
+        const ruleID = Number(ruleIDInput.value)
+        window.open(matchResult[fileID][ruleID][table].path)
+    }
+</script>
+</html>
