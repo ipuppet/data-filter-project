@@ -20,8 +20,8 @@ class ProcessView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        id = request.data.get("id")
-        file_instance = get_object_or_404(File, id=id)
+        file_id = request.data.get("file_id")
+        file_instance = get_object_or_404(File, id=file_id)
 
         try:
             FileConverter(file_instance).convert()
@@ -32,8 +32,8 @@ class ProcessView(APIView):
 
 class MetadataView(APIView):
     def get(self, request, *args, **kwargs):
-        id = kwargs.get("id")
-        file_instance = get_object_or_404(File, id=id)
+        file_id = kwargs.get("file_id")
+        file_instance = get_object_or_404(File, id=file_id)
         return Response(
             {
                 "id": file_instance.id,
@@ -49,8 +49,8 @@ class MatchDataView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        id = kwargs.get("id")
-        file_instance = get_object_or_404(File, id=id)
+        file_id = kwargs.get("file_id")
+        file_instance = get_object_or_404(File, id=file_id)
 
         try:
             page_number = int(request.query_params.get("page_number", 1))
@@ -60,9 +60,9 @@ class MatchDataView(APIView):
                 _("Invalid pagination parameters"), status=status.HTTP_400_BAD_REQUEST
             )
 
-        matcher = Matcher(file_instance)
+        matcher = Matcher()
         return Response(
-            matcher.fetch_all_data(page_number, items_per_page),
+            matcher.set_file(file_instance).fetch_all_data(page_number, items_per_page),
             status=status.HTTP_200_OK,
         )
 

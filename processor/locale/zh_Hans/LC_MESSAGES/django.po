@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-12 01:26+0800\n"
+"POT-Creation-Date: 2025-02-23 15:15+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,37 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: processor/admin.py:38
+#: processor/admin.py:39
 #, python-format
 msgid "%d file was successfully converted to SQLite."
 msgid_plural "%d files was successfully converted to SQLite."
 msgstr[0] ""
 msgstr[1] ""
 
-#: processor/models.py:18
-msgid "File ID"
-msgstr ""
-
-#: processor/models.py:21
-msgid "Display name"
-msgstr ""
-
-#: processor/models.py:23 processor/models.py:27
-msgid "File"
-msgstr ""
-
-#: processor/models.py:24
-msgid "Upload time"
-msgstr ""
-
-#: processor/models.py:28
-msgid "Files"
-msgstr ""
-
-#: processor/processor.py:143
+#: processor/matcher.py:75
 msgid "Table name is not set"
-msgstr ""
+msgstr "未设置表明"
 
-#: processor/views.py:58
+#: processor/models.py:19
+msgid "File ID"
+msgstr "文件 ID"
+
+#: processor/models.py:22
+msgid "Display name"
+msgstr "显示名称"
+
+#: processor/models.py:24 processor/models.py:28
+msgid "File"
+msgstr "文件"
+
+#: processor/models.py:25
+msgid "Upload time"
+msgstr "上传日期"
+
+#: processor/models.py:29
+msgid "Files"
+msgstr "文件"
+
+#: processor/views.py:60
 msgid "Invalid pagination parameters"
-msgstr ""
+msgstr "无效的分页参数"

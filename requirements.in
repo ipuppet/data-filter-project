@@ -8,3 +8,4 @@ defusedxml
 openpyxl
 sqlalchemy
 django-nested-admin
+xlrd

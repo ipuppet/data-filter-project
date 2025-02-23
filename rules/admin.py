@@ -38,7 +38,7 @@ class ConditionInline(nested_admin.NestedStackedInline):
         "operator",
         "value",
         ("temporal_unit", "temporal_window"),
-        ("aggregation_type"),
+        "aggregation_type",
         "custom_expression",
     ]
 
@@ -46,7 +46,7 @@ class ConditionInline(nested_admin.NestedStackedInline):
 class ConditionGroupInline(nested_admin.NestedTabularInline):
     model = ConditionGroup
     extra = 0
-    fields = ["rule", "logic_type", "parent_group", "order"]
+    fields = ["rule", "logic_type", "group_by", "parent_group"]
     inlines = [ConditionInline]
     form = ConditionGroupForm
 

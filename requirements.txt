@@ -84,3 +84,5 @@ uritemplate==4.1.1
     # via drf-spectacular
 urllib3==2.3.0
     # via requests
+xlrd==2.0.1
+    # via -r requirements.in

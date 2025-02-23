@@ -15,7 +15,7 @@ class Matcher:
         self.engine = None
         self.file = None
         self.rule = None
-        self.table_name: str = None
+        self.table_name: str = ""
 
     def set_file(self, file: File):
         self.file = file
@@ -71,18 +71,20 @@ class Matcher:
         return all_tables_data
 
     def fetch(self):
-        if not self.table_name:
+        if self.table_name == "":
             raise ValueError(_("Table name is not set"))
         session = DatabaseManager.get_session(self.file)
         table = Table(self.table_name, MetaData(), autoload_with=self.engine)
 
-        # TODO: Add support for rules
         sql_builder = SQLBuilder(self.rule, table)
         sql, params = sql_builder.build()
+        print(sql)
+
         query = text(sql).execution_options(render_postcompile=True)
         result = session.execute(query, params)
         rows = result.fetchall()
         columns = result.keys()
+
         df = pd.DataFrame(rows, columns=columns)
         execl_path = f"{self.file.get_full_path()}_{table.name}.xlsx"
         df.to_excel(execl_path, index=False, engine="openpyxl")

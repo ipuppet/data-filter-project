@@ -52,3 +52,13 @@ This will automatically initialize the database if it does not exist.
 ```shell
 ./scripts/build.sh reset
 ```
+
+## i18n
+
+### Create `.po` file
+
+`django-admin makemessages -l zh_Hans`
+
+### Compile
+
+`django-admin compilemessages`

@@ -11,7 +11,7 @@ class FieldManager(models.Manager):
             return field
 
     def update_with_mapped_values(
-        self, field, name, description, data_type, mapped_values
+            self, field, name, description, data_type, mapped_values
     ):
         with transaction.atomic():
             field.name = name
@@ -145,13 +145,24 @@ class ConditionGroup(models.Model):
         verbose_name=_("Parent group"),
     )
     logic_type = models.CharField(
-        max_length=10, choices=LOGIC_TYPE_CHOICES, verbose_name=_("Logic type")
+        max_length=10,
+        default=LOGIC_TYPE_CHOICES[0][0],
+        choices=LOGIC_TYPE_CHOICES,
+        verbose_name=_("Logic type"),
     )
     order = models.PositiveIntegerField(default=0, verbose_name=_("Order"))
+    group_by = models.ForeignKey(
+        Field,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="group_by_conditions",
+        verbose_name=_("Group by"),
+    )
 
     class Meta:
-        verbose_name = _("Rule group")
-        verbose_name_plural = _("Rule groups")
+        verbose_name = _("Condition group")
+        verbose_name_plural = _("Condition groups")
 
     def __str__(self):
         return f"Group {self.id}"
@@ -189,7 +200,10 @@ class Condition(models.Model):
 
     # 基础字段
     condition_type = models.CharField(
-        max_length=20, choices=CONDITION_TYPES, verbose_name=_("Condition type")
+        max_length=20,
+        default=CONDITION_TYPES[0][0],
+        choices=CONDITION_TYPES,
+        verbose_name=_("Condition type")
     )
     group = models.ForeignKey(
         ConditionGroup,
@@ -232,7 +246,7 @@ class Condition(models.Model):
     custom_expression = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_("Custom expression"),
+        verbose_name=_("Raw SQL expression"),
         help_text=_("Raw SQL expression"),
     )
 
