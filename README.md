@@ -13,6 +13,8 @@ There are two ways to install the dependencies: using `pip` or using `docker`.
 
 ### Use Pip
 
+> pip-tools is used to manage the dependencies.
+
 ```shell
 pip install -r requirements.txt
 ```
