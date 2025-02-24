@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
 
+from .db_manager import DatabaseManager
+
 
 def upload_to(instance, filename):
     today = datetime.today().strftime("%Y/%m/%d")
@@ -32,6 +34,7 @@ class File(models.Model):
         return os.path.join(settings.MEDIA_ROOT, self.file.path)
 
     def delete(self, *args, **kwargs):
+        DatabaseManager.close_engine(self)
         files = glob.glob(f"{self.get_full_path()}*")
         for file in files:
             os.remove(file)

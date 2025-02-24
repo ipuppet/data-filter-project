@@ -93,7 +93,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="uploadFile()">提交</button>
+                <button type="button" class="btn btn-primary" id="uploadFileSubmitBtn" onclick="uploadFile()">提交
+                </button>
             </div>
         </div>
     </div>
@@ -242,6 +243,8 @@
             uploadFileForm.classList.add('was-validated')
             return
         }
+        const btn = document.querySelector('#uploadFileSubmitBtn')
+        btn.disabled = true
         const file = document.querySelector('#uploadFile').files[0]
         const formData = new FormData()
         formData.append('file', file)
@@ -265,6 +268,8 @@
     function deleteFile(id) {
         axios.delete(`/api/files/${id}/`).then(() => {
             window.location.reload()
+        }).catch(error => {
+            console.error('Error deleting file:', error)
         })
     }
 
