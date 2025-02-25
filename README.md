@@ -64,3 +64,9 @@ This will automatically initialize the database if it does not exist.
 ### Compile
 
 `django-admin compilemessages`
+
+## pyinstaller
+
+```shell
+pyinstaller --onefile --clean --add-data "./templates:templates" --add-data "./static:static" --add-data "./processor/templates:processor/templates" --add-data "./processor/locale:processor/locale" --add-data "./rules/locale:rules/locale" run.py
+```

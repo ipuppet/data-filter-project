@@ -6,6 +6,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.sqlite3
+dist/
+build/
 /**/migrations/*
 !/**/migrations/__init__.py
 media/
