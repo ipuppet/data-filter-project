@@ -9,8 +9,6 @@ git clone https://github.com/ipuppet/data-filter-project
 cd data-filter-project
 ```
 
-There are two ways to install the dependencies: using `pip` or using `docker`.
-
 ### Use Pip
 
 > pip-tools is used to manage the dependencies.
@@ -37,24 +35,6 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-### Use Docker
-
-This will create a docker container named `data-filter-project`.
-
-**Note:** The `build.sh` script will first remove any existing containers with the same name.
-
-```shell
-./scripts/build.sh
-```
-
-This will automatically initialize the database if it does not exist.
-
-#### Reset Docker Database
-
-```shell
-./scripts/build.sh reset
-```
-
 ## i18n
 
 ### Create `.po` file
@@ -68,5 +48,5 @@ This will automatically initialize the database if it does not exist.
 ## pyinstaller
 
 ```shell
-pyinstaller --onefile --clean --add-data "./templates:templates" --add-data "./static:static" --add-data "./processor/templates:processor/templates" --add-data "./processor/locale:processor/locale" --add-data "./rules/locale:rules/locale" run.py
+pyinstaller run.spec
 ```

@@ -1,16 +1,22 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+datas = [
+    ('./templates', 'templates'),
+    ('./static', 'static'),
+    ('./processor', 'processor'),
+    ('./rules', 'rules'),
+]
 
 a = Analysis(
     ['run.py'],
     pathex=[],
     binaries=[],
-    datas=[('./templates', 'templates'), ('./static', 'static'), ('./processor/templates', 'processor/templates'), ('./processor/locale', 'processor/locale'), ('./rules/locale', 'rules/locale')],
+    datas=datas,
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['db.sqlite3', 'black', 'pip'],
     noarchive=False,
     optimize=0,
 )
