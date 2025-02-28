@@ -1,11 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_data_files
 
 datas = [
     ('./templates', 'templates'),
     ('./static', 'static'),
     ('./processor', 'processor'),
     ('./rules', 'rules'),
-]
+] + collect_data_files('nested_admin')
 
 a = Analysis(
     ['run.py'],
