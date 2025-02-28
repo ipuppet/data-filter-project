@@ -42,18 +42,20 @@ class Matcher:
             raise ValueError(_("Table name is not set"))
         session = DatabaseManager.get_session(self.file)
 
-        sql_builder = SQLBuilder(self.rule, self.table)
-        sql, params = sql_builder.build()
-        print(sql)
-        print(params)
+        try:
+            sql_builder = SQLBuilder(self.rule, self.table)
+            sql, params = sql_builder.build()
+            print(sql)
+            print(params)
 
-        query = text(sql).execution_options(render_postcompile=True)
-        result = session.execute(query, params)
-        rows = result.fetchall()
-        columns = result.keys()
-
-        self.df = pd.DataFrame(rows, columns=columns)
-        self.df.to_excel(self.excel_path, index=False, engine="openpyxl")
+            query = text(sql).execution_options(render_postcompile=True)
+            result = session.execute(query, params)
+            rows = result.fetchall()
+            columns = result.keys()
+            self.df = pd.DataFrame(rows, columns=columns)
+            self.df.to_excel(self.excel_path, index=False, engine="openpyxl")
+        finally:
+            session.close()
 
         self.url_path = self.excel_path.replace(str(settings.MEDIA_ROOT), "")
         self.url_path = self.url_path.replace("\\", "/")
